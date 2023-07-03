@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter Cities Based on States</title>
+    <style>
+        .grid
+        {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            
+            
+        }
+
+        .gird-items:nth-child(odd)
+        {
+            background-color: coral;
+            text-align: center;
+            font-size: 30px;
+            padding: 3rem 0;
+            
+           
+        }
+        .gird-items:nth-child(even)
+        {
+            background-color: aqua;
+            text-align: center;
+            font-size: 30px;
+            padding: 3rem 0;
+           
+        }
+
+        .anchortags
+        {
+            text-decoration: none;
+            color: pink;
+        }
+
+        .anchortags:hover
+        {
+            text-decoration: underline;
+
+        }
+
+
+
+    </style>
+    <script defer>
+      document.addEventListener('DOMContentLoaded', () => {
+            const endpoint = 'https://raw.githubusercontent.com/nshntarora/Indian-Cities-JSON/master/cities.json';
+            const citydata = [];
+            const statesdata = document.querySelector('#states');
+            async function fetchdata() {
+                    // const response = await fetch(endpoint);
+                    // const data = await response.json();
+                    // citydata.push(...data);
+                    // optionsload();
+                    await fetch(endpoint)
+                    .then(blob=>blob.json())
+                    .then(data=>citydata.push(...data))
+                    .catch(err=>console.log("Error to fetch data"))
+                optionsload();
+            }
+
+            function optionsload() {
+                const uniqueStates = [...new Set(citydata
+                .map(city => city.state)
+                .sort((citya,cityb)=>{
+                    if(citya>cityb)
+                    {
+                        return 1;
+                    }
+                    else
+                    {
+                        return -1;
+                    }
+                }))];
+                // const statefilter = uniqueStates.map(states => {
+                //     return `<option value="${states}">${states}</option>`;
+                // });
+
+                const statefilter = uniqueStates.map(states => 
+                `<option value="${states}">${states}</option>`
+                );
+
+                statesdata.innerHTML = statefilter.join('');
+            }
+        
+// function fetcheddata()
+// {
+//     console.log(citydata)
+    
+// const statesfilterss = citydata.filter(place=>{
+
+// if(place.state==='Maharashtra')
+// {
+
+//     return true
+// }
+// else
+// {
+//     return false
+// }
+//     });
+//     console.log(statesfilterss)
+
+// }
+
+// console.log("Fetching data Please Wait");
+// setTimeout(fetcheddata,5000) -->
+
+            fetchdata();
+            console.log(citydata)
+
+            const btn = document.querySelector('#btn');
+            const citydatas = document.querySelector('#citiesdata');
+             btn.addEventListener('click', () => {
+                const selectedValue = statesdata.value;
+                const filteredCities = citydata.filter(place => place.state === selectedValue);
+                const cityList = filteredCities.map(place => `<div class="gird-items">
+                   <h3> ${place.name}</h3>
+                   <a href="https://en.wikipedia.org/wiki/${place.name}" class="anchortags" title="Click for more info">${place.name}</a>
+                    </div>`);
+                citydatas.innerHTML = cityList.join('');
+            });
+
+        });
+       
+    </script>
+</head>
+<body>
+    <h1 style="text-align: center;">Filtering the Cities Based on States</h1>
+    <select name="States" id="states" style="display: block; margin: 0 auto;">
+    </select>
+    <button  type="button" id="btn" style="display: block; margin: 3rem auto; cursor: pointer;">Click to Show the Cities</button>
+    <div id="citiesdata" style="text-align: center; list-style: none;" class="grid">
+        
+    </div>
+</body>
+</html>
+
+
